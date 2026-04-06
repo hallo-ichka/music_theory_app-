@@ -72,14 +72,13 @@ export default function PianoKeyboard({
                   height={key.height}
                   rx={3}
                   className={`piano-key piano-key--white ${highlighted ? 'piano-key--highlighted' : ''}`}
-                  fill={highlighted ? highlightColor : undefined}
                   filter={highlighted ? `url(#${glowFilterId})` : 'url(#key-shadow)'}
                   onClick={() => handleKeyClick(key.note)}
                   onKeyDown={(e) => e.key === 'Enter' && handleKeyClick(key.note)}
                   role="button"
                   tabIndex={0}
                   aria-label={`${key.note}${highlighted ? ' (highlighted)' : ''}`}
-                  style={{ cursor: 'pointer' }}
+                  style={{ cursor: 'pointer', fill: highlighted ? highlightColor : '' }}
                 />
                 {/* Highlight dot indicator on the key */}
                 {highlighted && (
@@ -124,14 +123,13 @@ export default function PianoKeyboard({
                   height={key.height}
                   rx={2}
                   className={`piano-key piano-key--black ${highlighted ? 'piano-key--highlighted' : ''}`}
-                  fill={highlighted ? highlightColor : undefined}
                   filter={highlighted ? `url(#${glowFilterId})` : undefined}
                   onClick={() => handleKeyClick(key.note)}
                   onKeyDown={(e) => e.key === 'Enter' && handleKeyClick(key.note)}
                   role="button"
                   tabIndex={0}
                   aria-label={`${key.note}${highlighted ? ' (highlighted)' : ''}`}
-                  style={{ cursor: 'pointer' }}
+                  style={{ cursor: 'pointer', fill: highlighted ? highlightColor : '' }}
                 />
                 {/* Highlight dot indicator on the black key */}
                 {highlighted && (

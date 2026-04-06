@@ -26,7 +26,7 @@ export default function ExportButton({ svgRef, chordName }) {
       // Inline styles for keys because CSS variables are lost in SVG-to-image serialization
       const whiteKeys = clone.querySelectorAll('.piano-key--white');
       whiteKeys.forEach((key) => {
-        if (!key.getAttribute('fill')) {
+        if (!key.classList.contains('piano-key--highlighted')) {
           key.style.fill = '#f5f3ed';
         }
         key.style.stroke = '#c8c4bc';
@@ -35,7 +35,7 @@ export default function ExportButton({ svgRef, chordName }) {
 
       const blackKeys = clone.querySelectorAll('.piano-key--black');
       blackKeys.forEach((key) => {
-        if (!key.getAttribute('fill')) {
+        if (!key.classList.contains('piano-key--highlighted')) {
           key.style.fill = '#1e1e1e';
         }
         key.style.stroke = '#0a0a0a';
