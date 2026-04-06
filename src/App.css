@@ -1,0 +1,131 @@
+/* ======================================================
+   App Layout Styles
+   ====================================================== */
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+/* ---- Header ---- */
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(12, 12, 12, 0.8);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.app-header-content {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: var(--space-md) var(--space-lg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.app-logo-group {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.app-logo {
+  width: 32px;
+  height: 32px;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.app-title {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+
+.app-subtitle {
+  font-size: 0.72rem;
+  color: var(--text-tertiary);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+
+/* ---- Main Content ---- */
+.app-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2xl);
+  padding: var(--space-3xl) var(--space-lg) var(--space-2xl);
+  max-width: 800px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.input-section {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.keyboard-section {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.export-section {
+  display: flex;
+  justify-content: center;
+}
+
+/* ---- Footer ---- */
+.app-footer {
+  text-align: center;
+  padding: var(--space-xl) var(--space-lg);
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.app-footer a {
+  color: var(--accent);
+  text-decoration: none;
+  transition: opacity var(--duration-fast);
+}
+
+.app-footer a:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 640px) {
+  .app-main {
+    padding: var(--space-xl) var(--space-md) var(--space-lg);
+    gap: var(--space-xl);
+  }
+
+  .app-header-content {
+    padding: var(--space-sm) var(--space-md);
+  }
+
+  .app-title {
+    font-size: 1rem;
+  }
+
+  .export-controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-md);
+  }
+}

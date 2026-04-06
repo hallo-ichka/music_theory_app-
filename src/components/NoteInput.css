@@ -1,0 +1,137 @@
+/* ======================================================
+   NoteInput Component Styles
+   ====================================================== */
+
+.note-input-wrapper {
+  width: 100%;
+  max-width: 520px;
+  animation: fadeInUp var(--duration-slow) var(--ease-out-expo) both;
+}
+
+/* ---- Input Field Container ---- */
+.note-input-field {
+  position: relative;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg) var(--space-lg) var(--space-md);
+  transition: border-color var(--duration-normal) var(--ease-out-quart),
+              box-shadow var(--duration-normal) var(--ease-out-quart),
+              background var(--duration-normal) var(--ease-out-quart);
+}
+
+.note-input-field--focused {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft), 0 8px 32px rgba(0, 0, 0, 0.3);
+  background: var(--bg-surface-raised);
+}
+
+.note-input-field--error {
+  border-color: var(--text-error);
+  box-shadow: 0 0 0 3px rgba(232, 93, 93, 0.1);
+}
+
+/* ---- Label ---- */
+.note-input-label {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: var(--space-sm);
+}
+
+/* ---- Input ---- */
+.note-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 1.25rem;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  caret-color: var(--accent);
+}
+
+.note-input::placeholder {
+  color: var(--text-tertiary);
+}
+
+/* ---- Hint ---- */
+.note-input-hint {
+  display: block;
+  margin-top: var(--space-sm);
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+}
+
+/* ---- Errors ---- */
+.note-input-errors {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  margin-top: var(--space-sm);
+  animation: fadeIn var(--duration-fast) var(--ease-out-quart);
+}
+
+.note-input-error {
+  display: inline-block;
+  font-size: 0.75rem;
+  color: var(--text-error);
+  background: rgba(232, 93, 93, 0.08);
+  padding: 2px var(--space-sm);
+  border-radius: var(--radius-sm);
+}
+
+/* ---- Presets Section ---- */
+.presets-section {
+  margin-top: var(--space-lg);
+}
+
+.presets-label {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: var(--space-sm);
+}
+
+.presets-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+/* ---- Preset Buttons ---- */
+.preset-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-xs) var(--space-md);
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-out-quart);
+  white-space: nowrap;
+}
+
+.preset-btn:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  transform: translateY(-1px);
+}
+
+.preset-btn:active {
+  transform: translateY(0);
+}

@@ -1,0 +1,89 @@
+/* ======================================================
+   PianoKeyboard Component Styles
+   ====================================================== */
+
+.piano-keyboard-container {
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  animation: scaleIn var(--duration-slow) var(--ease-out-expo) both;
+}
+
+.piano-keyboard-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ---- White Keys ---- */
+.piano-key--white {
+  fill: var(--key-white);
+  stroke: var(--key-border);
+  stroke-width: 0.5;
+  transition: fill var(--duration-fast) var(--ease-out-quart),
+              stroke var(--duration-fast) var(--ease-out-quart),
+              opacity var(--duration-fast) var(--ease-out-quart);
+}
+
+.piano-key--white:hover:not(.piano-key--highlighted) {
+  fill: var(--key-white-hover);
+  stroke: var(--text-secondary);
+}
+
+/* ---- Black Keys ---- */
+.piano-key--black {
+  fill: var(--key-black);
+  stroke: var(--key-black-border);
+  stroke-width: 0.5;
+  transition: fill var(--duration-fast) var(--ease-out-quart);
+}
+
+.piano-key--black:hover:not(.piano-key--highlighted) {
+  fill: var(--key-black-hover);
+}
+
+/* ---- Highlighted State ---- */
+.piano-key--highlighted {
+  stroke: rgba(255, 255, 255, 0.3);
+  stroke-width: 1;
+  transition: fill var(--duration-normal) var(--ease-out-expo);
+}
+
+/* ---- Key Dot Indicator ---- */
+.key-dot {
+  opacity: 0;
+  animation: dotPulseIn var(--duration-normal) var(--ease-out-expo) forwards;
+  animation-delay: 50ms;
+}
+
+@keyframes dotPulseIn {
+  0% {
+    opacity: 0;
+    r: 0;
+  }
+  60% {
+    opacity: 1;
+    r: 6;
+  }
+  100% {
+    opacity: 0.9;
+    r: 5;
+  }
+}
+
+/* ---- Key Labels ---- */
+.piano-key-label {
+  pointer-events: none;
+  opacity: 0;
+  animation: fadeIn var(--duration-normal) var(--ease-out-expo) forwards;
+  animation-delay: 100ms;
+  user-select: none;
+}
+
+/* ---- Chord Annotation ---- */
+.chord-annotation {
+  opacity: 0;
+  animation: fadeIn var(--duration-slow) var(--ease-out-expo) forwards;
+  animation-delay: 150ms;
+  user-select: none;
+}

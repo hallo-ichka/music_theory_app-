@@ -1,0 +1,123 @@
+/* ======================================================
+   ExportButton Component Styles
+   ====================================================== */
+
+.export-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+  animation: fadeInUp var(--duration-slow) var(--ease-out-expo) both;
+  animation-delay: 300ms;
+}
+
+/* ---- Scale Selector ---- */
+.export-scale-selector {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.export-scale-label {
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+}
+
+.export-scale-options {
+  display: flex;
+  gap: 2px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 2px;
+}
+
+.export-scale-btn {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: var(--space-xs) var(--space-md);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-out-quart);
+}
+
+.export-scale-btn:hover {
+  color: var(--text-primary);
+  background: var(--bg-surface-hover);
+}
+
+.export-scale-btn--active {
+  color: var(--accent-text);
+  background: var(--accent);
+  font-weight: 600;
+}
+
+.export-scale-btn--active:hover {
+  color: var(--accent-text);
+  background: var(--accent);
+}
+
+/* ---- Export Button ---- */
+.export-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--accent-text);
+  background: var(--accent);
+  border: none;
+  border-radius: var(--radius-md);
+  padding: var(--space-sm) var(--space-xl);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-out-quart);
+  position: relative;
+  overflow: hidden;
+}
+
+.export-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 50%);
+  opacity: 0;
+  transition: opacity var(--duration-fast) var(--ease-out-quart);
+}
+
+.export-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 24px var(--accent-glow);
+}
+
+.export-btn:hover::before {
+  opacity: 1;
+}
+
+.export-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.export-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.export-btn--loading {
+  background: var(--bg-surface-raised);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-subtle);
+}
+
+.export-btn-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
