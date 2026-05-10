@@ -1,4 +1,4 @@
-import { Note, Chord } from 'tonal';
+import { Note, Chord, Scale } from 'tonal';
 
 /**
  * Full chord symbol to human-readable name mapping
@@ -221,6 +221,41 @@ export function getEnharmonicLabel(note) {
   // Prefer flats for display in certain cases
   const enharmonic = Note.enharmonic(note);
   return pc || enharmonic || note;
+}
+
+export const ROOT_NOTES = ['C', 'C#', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'Ab', 'A', 'Bb', 'B'];
+
+export const SCALE_PRESETS = [
+  { label: 'Major',            value: 'major' },
+  { label: 'Minor',            value: 'minor' },
+  { label: 'Dorian',           value: 'dorian' },
+  { label: 'Phrygian',         value: 'phrygian' },
+  { label: 'Lydian',           value: 'lydian' },
+  { label: 'Mixolydian',       value: 'mixolydian' },
+  { label: 'Harmonic Minor',   value: 'harmonic minor' },
+  { label: 'Pentatonic Major', value: 'major pentatonic' },
+  { label: 'Pentatonic Minor', value: 'minor pentatonic' },
+  { label: 'Blues',            value: 'blues' },
+];
+
+// Returns MIDI numbers for one octave of the scale, anchored at root3.
+// Anchoring at octave 3 guarantees all notes fall within C3–C5 for any root.
+export function getScaleNotes(root, scaleType) {
+  const scale = Scale.get(`${root} ${scaleType}`);
+  if (!scale.notes.length) return [];
+  const rootMidi = Note.midi(`${root}3`);
+  if (rootMidi === null) return [];
+  const midis = [];
+  for (const pc of scale.notes) {
+    for (let octave = 2; octave <= 5; octave++) {
+      const midi = Note.midi(`${pc}${octave}`);
+      if (midi !== null && midi >= rootMidi && midi < rootMidi + 12) {
+        midis.push(midi);
+        break;
+      }
+    }
+  }
+  return midis.sort((a, b) => a - b);
 }
 
 /**
