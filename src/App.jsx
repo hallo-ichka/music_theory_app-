@@ -3,28 +3,38 @@ import NoteInput from './components/NoteInput';
 import PianoKeyboard from './components/PianoKeyboard';
 import ExportButton from './components/ExportButton';
 import ColorPicker from './components/ColorPicker';
-import { parseNoteInput, detectChord } from './utils/musicUtils';
+import ScaleSelector from './components/ScaleSelector';
+import { parseNoteInput, detectChord, getScaleNotes, SCALE_PRESETS } from './utils/musicUtils';
 import { Note } from 'tonal';
 import './App.css';
 
 export default function App() {
   const [noteInput, setNoteInput] = useState('');
   const [highlightColor, setHighlightColor] = useState('#d4a843');
+  const [mode, setMode] = useState('chord');
+  const [scaleRoot, setScaleRoot] = useState('C');
+  const [scaleType, setScaleType] = useState('major');
   const svgRef = useRef(null);
 
-  // Parse notes in real-time
   const { notes, midiValues, errors } = useMemo(
     () => parseNoteInput(noteInput),
     [noteInput]
   );
 
-  // Detect chord
   const chordName = useMemo(() => detectChord(notes), [notes]);
 
-  // Handle clicking a piano key
+  const scaleMidis = useMemo(
+    () => mode === 'scale' ? getScaleNotes(scaleRoot, scaleType) : [],
+    [mode, scaleRoot, scaleType]
+  );
+
+  const scaleLabel = useMemo(() => {
+    const preset = SCALE_PRESETS.find((p) => p.value === scaleType);
+    return `${scaleRoot} ${preset?.label ?? scaleType} Scale`;
+  }, [scaleRoot, scaleType]);
+
   const handleKeyClick = useCallback(
     (note) => {
-      // If the note is already in the input, remove it
       const currentNotes = noteInput
         .split(',')
         .map((n) => n.trim())
@@ -36,10 +46,8 @@ export default function App() {
       );
 
       if (existingIndex !== -1) {
-        // Remove the note
         currentNotes.splice(existingIndex, 1);
       } else {
-        // Add the note
         currentNotes.push(note);
       }
 
@@ -47,6 +55,9 @@ export default function App() {
     },
     [noteInput]
   );
+
+  const activeHighlights = mode === 'chord' ? midiValues : scaleMidis;
+  const activeLabel = mode === 'chord' ? chordName : scaleLabel;
 
   return (
     <div className="app">
@@ -64,7 +75,7 @@ export default function App() {
             </svg>
             <div>
               <h1 className="app-title">Chord Visualizer</h1>
-              <p className="app-subtitle">Piano chord to image</p>
+              <p className="app-subtitle">Piano chord &amp; scale to image</p>
             </div>
           </div>
           <ColorPicker value={highlightColor} onChange={setHighlightColor} />
@@ -72,27 +83,50 @@ export default function App() {
       </header>
 
       <main className="app-main">
+        <div className="mode-toggle" role="group" aria-label="Visualization mode">
+          <button
+            type="button"
+            className={`mode-btn${mode === 'chord' ? ' mode-btn--active' : ''}`}
+            onClick={() => setMode('chord')}
+          >
+            Chords
+          </button>
+          <button
+            type="button"
+            className={`mode-btn${mode === 'scale' ? ' mode-btn--active' : ''}`}
+            onClick={() => setMode('scale')}
+          >
+            Scales
+          </button>
+        </div>
+
         <section className="input-section" aria-label="Note input">
-          <NoteInput value={noteInput} onChange={setNoteInput} errors={errors} />
+          {mode === 'chord'
+            ? <NoteInput value={noteInput} onChange={setNoteInput} errors={errors} />
+            : <ScaleSelector root={scaleRoot} scaleType={scaleType} onRootChange={setScaleRoot} onTypeChange={setScaleType} />
+          }
         </section>
 
         <section className="keyboard-section" aria-label="Piano keyboard visualization">
           <PianoKeyboard
-            highlightedMidis={midiValues}
+            highlightedMidis={activeHighlights}
             highlightColor={highlightColor}
-            chordName={chordName}
-            onKeyClick={handleKeyClick}
+            chordName={activeLabel}
+            onKeyClick={mode === 'chord' ? handleKeyClick : undefined}
             svgRef={svgRef}
           />
         </section>
 
         <section className="export-section" aria-label="Export controls">
-          <ExportButton svgRef={svgRef} chordName={chordName} />
+          <ExportButton svgRef={svgRef} chordName={activeLabel} />
         </section>
       </main>
 
       <footer className="app-footer">
-        <p>Click keys or type notes · Powered by <a href="https://github.com/tonaljs/tonal" target="_blank" rel="noopener noreferrer">Tonal.js</a></p>
+        {mode === 'chord'
+          ? <p>Click keys or type notes · Powered by <a href="https://github.com/tonaljs/tonal" target="_blank" rel="noopener noreferrer">Tonal.js</a></p>
+          : <p>Select a root and scale type · Powered by <a href="https://github.com/tonaljs/tonal" target="_blank" rel="noopener noreferrer">Tonal.js</a></p>
+        }
       </footer>
     </div>
   );
