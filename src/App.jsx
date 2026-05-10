@@ -14,6 +14,7 @@ export default function App() {
   const [mode, setMode] = useState('chord');
   const [scaleRoot, setScaleRoot] = useState('C');
   const [scaleType, setScaleType] = useState('major');
+  const [showLabels, setShowLabels] = useState(true);
   const svgRef = useRef(null);
 
   const { notes, midiValues, errors } = useMemo(
@@ -98,6 +99,14 @@ export default function App() {
           >
             Scales
           </button>
+          <button
+            type="button"
+            className={`mode-btn${showLabels ? ' mode-btn--active' : ''}`}
+            onClick={() => setShowLabels((v) => !v)}
+            aria-pressed={showLabels}
+          >
+            Labels
+          </button>
         </div>
 
         <section className="input-section" aria-label="Note input">
@@ -111,7 +120,8 @@ export default function App() {
           <PianoKeyboard
             highlightedMidis={activeHighlights}
             highlightColor={highlightColor}
-            chordName={activeLabel}
+            chordName={showLabels ? activeLabel : ''}
+            showNoteLabels={showLabels}
             onKeyClick={mode === 'chord' ? handleKeyClick : undefined}
             svgRef={svgRef}
           />
