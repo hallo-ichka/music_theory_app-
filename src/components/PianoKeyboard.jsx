@@ -15,6 +15,7 @@ export default function PianoKeyboard({
   showNoteLabels = true,
   onKeyClick,
   svgRef,
+  keyOverrides = null,
 }) {
   const layout = useMemo(() => generateKeyboardLayout(3, 4), []);
   const { whiteKeys, blackKeys, totalWidth, totalHeight } = layout;
@@ -53,6 +54,16 @@ export default function PianoKeyboard({
               <feMergeNode in="SourceGraphic" />
             </feMerge>
           </filter>
+          {/* Glow filter for interval (teal) keys */}
+          <filter id="key-glow-interval" x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur" />
+            <feFlood floodColor="#3db8b0" floodOpacity="0.6" result="color" />
+            <feComposite in="color" in2="blur" operator="in" result="glow" />
+            <feMerge>
+              <feMergeNode in="glow" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
           {/* Subtle shadow for white keys */}
           <filter id="key-shadow" x="-2%" y="-2%" width="104%" height="108%">
             <feDropShadow dx="0" dy="1" stdDeviation="1" floodColor="#000" floodOpacity="0.15" />
@@ -62,7 +73,12 @@ export default function PianoKeyboard({
         <g transform={`translate(${PADDING_X}, ${PADDING_TOP})`}>
           {/* White keys */}
           {whiteKeys.map((key) => {
-            const highlighted = isNoteHighlighted(key.midi, highlightedMidis);
+            const override = keyOverrides?.get(key.midi);
+            const highlighted = override != null || isNoteHighlighted(key.midi, highlightedMidis);
+            const fillColor = override ? override.color : (highlighted ? highlightColor : '');
+            const glowId = override?.color === '#3db8b0' ? 'key-glow-interval' : glowFilterId;
+            const labelText = override ? override.label : key.note;
+            const labelColor = override ? override.color : highlightColor;
             return (
               <g key={key.note} className="piano-key-group">
                 <rect
@@ -72,15 +88,14 @@ export default function PianoKeyboard({
                   height={key.height}
                   rx={3}
                   className={`piano-key piano-key--white ${highlighted ? 'piano-key--highlighted' : ''}`}
-                  filter={highlighted ? `url(#${glowFilterId})` : 'url(#key-shadow)'}
+                  filter={highlighted ? `url(#${glowId})` : 'url(#key-shadow)'}
                   onClick={() => handleKeyClick(key.note)}
                   onKeyDown={(e) => e.key === 'Enter' && handleKeyClick(key.note)}
                   role="button"
                   tabIndex={0}
                   aria-label={`${key.note}${highlighted ? ' (highlighted)' : ''}`}
-                  style={{ cursor: 'pointer', fill: highlighted ? highlightColor : '' }}
+                  style={{ cursor: 'pointer', fill: fillColor }}
                 />
-                {/* Highlight dot indicator on the key */}
                 {highlighted && (
                   <circle
                     cx={key.x + key.width / 2}
@@ -92,19 +107,18 @@ export default function PianoKeyboard({
                     pointerEvents="none"
                   />
                 )}
-                {/* Note label below the key */}
                 {highlighted && showNoteLabels && (
                   <text
                     x={key.x + key.width / 2}
                     y={key.height + 20}
                     className="piano-key-label"
                     textAnchor="middle"
-                    fill={highlightColor}
+                    fill={labelColor}
                     fontSize="11"
                     fontFamily="'DM Sans', sans-serif"
                     fontWeight="600"
                   >
-                    {key.note}
+                    {labelText}
                   </text>
                 )}
               </g>
@@ -113,7 +127,12 @@ export default function PianoKeyboard({
 
           {/* Black keys (rendered after white keys so they appear on top) */}
           {blackKeys.map((key) => {
-            const highlighted = isNoteHighlighted(key.midi, highlightedMidis);
+            const override = keyOverrides?.get(key.midi);
+            const highlighted = override != null || isNoteHighlighted(key.midi, highlightedMidis);
+            const fillColor = override ? override.color : (highlighted ? highlightColor : '');
+            const glowId = override?.color === '#3db8b0' ? 'key-glow-interval' : glowFilterId;
+            const labelText = override ? override.label : key.note;
+            const labelColor = override ? override.color : highlightColor;
             return (
               <g key={key.note} className="piano-key-group">
                 <rect
@@ -123,15 +142,14 @@ export default function PianoKeyboard({
                   height={key.height}
                   rx={2}
                   className={`piano-key piano-key--black ${highlighted ? 'piano-key--highlighted' : ''}`}
-                  filter={highlighted ? `url(#${glowFilterId})` : undefined}
+                  filter={highlighted ? `url(#${glowId})` : undefined}
                   onClick={() => handleKeyClick(key.note)}
                   onKeyDown={(e) => e.key === 'Enter' && handleKeyClick(key.note)}
                   role="button"
                   tabIndex={0}
                   aria-label={`${key.note}${highlighted ? ' (highlighted)' : ''}`}
-                  style={{ cursor: 'pointer', fill: highlighted ? highlightColor : '' }}
+                  style={{ cursor: 'pointer', fill: fillColor }}
                 />
-                {/* Highlight dot indicator on the black key */}
                 {highlighted && (
                   <circle
                     cx={key.x + key.width / 2}
@@ -143,19 +161,18 @@ export default function PianoKeyboard({
                     pointerEvents="none"
                   />
                 )}
-                {/* Note label below the keyboard line for black keys */}
                 {highlighted && showNoteLabels && (
                   <text
                     x={key.x + key.width / 2}
                     y={totalHeight + 20}
                     className="piano-key-label piano-key-label--black"
                     textAnchor="middle"
-                    fill={highlightColor}
+                    fill={labelColor}
                     fontSize="10"
                     fontFamily="'DM Sans', sans-serif"
                     fontWeight="600"
                   >
-                    {key.note}
+                    {labelText}
                   </text>
                 )}
               </g>

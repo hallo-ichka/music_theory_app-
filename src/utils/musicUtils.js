@@ -1,4 +1,4 @@
-import { Note, Chord, Scale } from 'tonal';
+import { Note, Chord, Scale, Interval } from 'tonal';
 
 /**
  * Full chord symbol to human-readable name mapping
@@ -256,6 +256,74 @@ export function getScaleNotes(root, scaleType) {
     }
   }
   return midis.sort((a, b) => a - b);
+}
+
+export const THEORY_INTERVALS = [
+  { label: 'Minor 2nd',   symbol: 'b2', interval: '2m' },
+  { label: 'Major 2nd',   symbol: '2',  interval: '2M' },
+  { label: 'Minor 3rd',   symbol: 'b3', interval: '3m' },
+  { label: 'Major 3rd',   symbol: '3',  interval: '3M' },
+  { label: 'Perfect 4th', symbol: '4',  interval: '4P' },
+  { label: 'Tritone',     symbol: '#4', interval: '4A' },
+  { label: 'Perfect 5th', symbol: '5',  interval: '5P' },
+  { label: 'Minor 6th',   symbol: 'b6', interval: '6m' },
+  { label: 'Major 6th',   symbol: '6',  interval: '6M' },
+  { label: 'Minor 7th',   symbol: 'b7', interval: '7m' },
+  { label: 'Major 7th',   symbol: '7',  interval: '7M' },
+  { label: 'Octave',      symbol: '8',  interval: '8P' },
+];
+
+export const THEORY_SCALE_PRESETS = [
+  { label: 'Major (Ionian)',     value: 'major' },
+  { label: 'Dorian',             value: 'dorian' },
+  { label: 'Phrygian',           value: 'phrygian' },
+  { label: 'Lydian',             value: 'lydian' },
+  { label: 'Mixolydian',         value: 'mixolydian' },
+  { label: 'Natural Minor',      value: 'minor' },
+  { label: 'Locrian',            value: 'locrian' },
+  { label: 'Harmonic Minor',     value: 'harmonic minor' },
+  { label: 'Melodic Minor',      value: 'melodic minor' },
+  { label: 'Major Pentatonic',   value: 'major pentatonic' },
+  { label: 'Minor Pentatonic',   value: 'minor pentatonic' },
+  { label: 'Blues',              value: 'blues' },
+  { label: 'Whole Tone',         value: 'whole tone' },
+  { label: 'Diminished (HW)',    value: 'diminished' },
+  { label: 'Hungarian Minor',    value: 'hungarian minor' },
+  { label: 'Phrygian Dominant',  value: 'phrygian dominant' },
+];
+
+export function getIntervalTarget(root, intervalName) {
+  const KEYBOARD_MAX = 72; // C5
+  let octave = 4;
+  let rootNote = `${root}${octave}`;
+  let targetNote = Note.transpose(rootNote, intervalName);
+  let targetMidi = Note.midi(targetNote);
+  if (targetMidi !== null && targetMidi > KEYBOARD_MAX) {
+    octave = 3;
+    rootNote = `${root}${octave}`;
+    targetNote = Note.transpose(rootNote, intervalName);
+    targetMidi = Note.midi(targetNote);
+  }
+  const rootMidi = Note.midi(rootNote);
+  return { rootMidi, targetMidi, targetNote, semitones: Interval.semitones(intervalName) };
+}
+
+export function getScaleDegrees(root, scaleType) {
+  const scale = Scale.get(`${root} ${scaleType}`);
+  if (!scale.notes.length) return [];
+  const rootMidi = Note.midi(`${root}3`);
+  if (rootMidi === null) return [];
+  const result = [];
+  scale.notes.forEach((pc, i) => {
+    for (let octave = 2; octave <= 5; octave++) {
+      const midi = Note.midi(`${pc}${octave}`);
+      if (midi !== null && midi >= rootMidi && midi < rootMidi + 12) {
+        result.push({ midi, degree: i + 1, degreeLabel: String(i + 1) });
+        break;
+      }
+    }
+  });
+  return result.sort((a, b) => a.midi - b.midi);
 }
 
 /**

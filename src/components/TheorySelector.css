@@ -1,0 +1,50 @@
+.theory-selector-wrapper {
+  width: 100%;
+  max-width: 520px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  animation: fadeInUp var(--duration-slow) var(--ease-out-expo) both;
+}
+
+.theory-submode-tabs {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.theory-interval-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-sm);
+}
+
+.theory-interval-btn {
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--space-sm) var(--space-xs);
+}
+
+.theory-interval-name {
+  font-size: 0.72rem;
+  line-height: 1.2;
+}
+
+.theory-interval-symbol {
+  font-size: 0.65rem;
+  opacity: 0.6;
+  font-family: var(--font-display);
+}
+
+.theory-legend {
+  display: flex;
+  gap: var(--space-md);
+  margin-top: var(--space-xs);
+}
+
+.theory-legend-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: 0.72rem;
+  color: var(--text-tertiary);
+}

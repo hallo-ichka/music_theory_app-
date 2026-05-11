@@ -4,7 +4,11 @@ import PianoKeyboard from './components/PianoKeyboard';
 import ExportButton from './components/ExportButton';
 import ColorPicker from './components/ColorPicker';
 import ScaleSelector from './components/ScaleSelector';
-import { parseNoteInput, detectChord, getScaleNotes, SCALE_PRESETS } from './utils/musicUtils';
+import TheorySelector from './components/TheorySelector';
+import {
+  parseNoteInput, detectChord, getScaleNotes, SCALE_PRESETS,
+  getIntervalTarget, getScaleDegrees, THEORY_INTERVALS, THEORY_SCALE_PRESETS,
+} from './utils/musicUtils';
 import { Note } from 'tonal';
 import './App.css';
 
@@ -15,6 +19,11 @@ export default function App() {
   const [scaleRoot, setScaleRoot] = useState('C');
   const [scaleType, setScaleType] = useState('major');
   const [showLabels, setShowLabels] = useState(true);
+  const [transparentBg, setTransparentBg] = useState(false);
+  const [theorySubMode, setTheorySubMode] = useState('intervals');
+  const [theoryRoot, setTheoryRoot] = useState('C');
+  const [theoryInterval, setTheoryInterval] = useState('5P');
+  const [theoryScaleType, setTheoryScaleType] = useState('major');
   const svgRef = useRef(null);
 
   const { notes, midiValues, errors } = useMemo(
@@ -57,8 +66,44 @@ export default function App() {
     [noteInput]
   );
 
-  const activeHighlights = mode === 'chord' ? midiValues : scaleMidis;
-  const activeLabel = mode === 'chord' ? chordName : scaleLabel;
+  const KEYBOARD_MIN = 48;
+  const KEYBOARD_MAX = 72;
+
+  const theoryKeyOverrides = useMemo(() => {
+    if (mode !== 'theory') return null;
+    const map = new Map();
+    if (theorySubMode === 'intervals') {
+      const { rootMidi, targetMidi } = getIntervalTarget(theoryRoot, theoryInterval);
+      if (rootMidi >= KEYBOARD_MIN && rootMidi <= KEYBOARD_MAX) {
+        map.set(rootMidi, { color: highlightColor, label: 'R' });
+      }
+      const intervalEntry = THEORY_INTERVALS.find((i) => i.interval === theoryInterval);
+      if (targetMidi !== null && targetMidi >= KEYBOARD_MIN && targetMidi <= KEYBOARD_MAX) {
+        map.set(targetMidi, { color: '#3db8b0', label: intervalEntry?.symbol ?? '' });
+      }
+    } else {
+      const degrees = getScaleDegrees(theoryRoot, theoryScaleType);
+      for (const { midi, degreeLabel } of degrees) {
+        map.set(midi, { color: highlightColor, label: degreeLabel });
+      }
+    }
+    return map;
+  }, [mode, theorySubMode, theoryRoot, theoryInterval, theoryScaleType, highlightColor]);
+
+  const activeHighlights = mode === 'chord' ? midiValues : mode === 'scale' ? scaleMidis : [];
+
+  const theoryLabel = useMemo(() => {
+    if (theorySubMode === 'intervals') {
+      const entry = THEORY_INTERVALS.find((i) => i.interval === theoryInterval);
+      const { targetNote, targetMidi } = getIntervalTarget(theoryRoot, theoryInterval);
+      const outOfRange = targetMidi === null || targetMidi > KEYBOARD_MAX;
+      return `${theoryRoot} — ${entry?.label ?? theoryInterval}${outOfRange ? ' (out of range)' : ` (${targetNote})`}`;
+    }
+    const preset = THEORY_SCALE_PRESETS.find((p) => p.value === theoryScaleType);
+    return `${theoryRoot} ${preset?.label ?? theoryScaleType}`;
+  }, [theorySubMode, theoryRoot, theoryInterval, theoryScaleType]);
+
+  const activeLabel = mode === 'chord' ? chordName : mode === 'scale' ? scaleLabel : theoryLabel;
 
   return (
     <div className="app">
@@ -100,6 +145,13 @@ export default function App() {
             >
               Scales
             </button>
+            <button
+              type="button"
+              className={`mode-btn${mode === 'theory' ? ' mode-btn--active' : ''}`}
+              onClick={() => setMode('theory')}
+            >
+              Theory
+            </button>
           </div>
           <label className="label-toggle">
             <button
@@ -113,12 +165,31 @@ export default function App() {
             </button>
             <span className="label-toggle__text">Labels</span>
           </label>
+          <label className="label-toggle">
+            <button
+              type="button"
+              role="switch"
+              aria-checked={transparentBg}
+              className={`label-toggle__track${transparentBg ? ' label-toggle__track--on' : ''}`}
+              onClick={() => setTransparentBg((v) => !v)}
+            >
+              <span className="label-toggle__thumb" />
+            </button>
+            <span className="label-toggle__text">Transparent</span>
+          </label>
         </div>
 
         <section className="input-section" aria-label="Note input">
           {mode === 'chord'
             ? <NoteInput value={noteInput} onChange={setNoteInput} errors={errors} />
-            : <ScaleSelector root={scaleRoot} scaleType={scaleType} onRootChange={setScaleRoot} onTypeChange={setScaleType} />
+            : mode === 'scale'
+              ? <ScaleSelector root={scaleRoot} scaleType={scaleType} onRootChange={setScaleRoot} onTypeChange={setScaleType} />
+              : <TheorySelector
+                  subMode={theorySubMode} onSubModeChange={setTheorySubMode}
+                  root={theoryRoot} onRootChange={setTheoryRoot}
+                  interval={theoryInterval} onIntervalChange={setTheoryInterval}
+                  scaleType={theoryScaleType} onScaleTypeChange={setTheoryScaleType}
+                />
           }
         </section>
 
@@ -130,18 +201,21 @@ export default function App() {
             showNoteLabels={showLabels}
             onKeyClick={mode === 'chord' ? handleKeyClick : undefined}
             svgRef={svgRef}
+            keyOverrides={theoryKeyOverrides}
           />
         </section>
 
         <section className="export-section" aria-label="Export controls">
-          <ExportButton svgRef={svgRef} chordName={activeLabel} />
+          <ExportButton svgRef={svgRef} chordName={activeLabel} transparentBg={transparentBg} />
         </section>
       </main>
 
       <footer className="app-footer">
         {mode === 'chord'
           ? <p>Click keys or type notes · Powered by <a href="https://github.com/tonaljs/tonal" target="_blank" rel="noopener noreferrer">Tonal.js</a></p>
-          : <p>Select a root and scale type · Powered by <a href="https://github.com/tonaljs/tonal" target="_blank" rel="noopener noreferrer">Tonal.js</a></p>
+          : mode === 'scale'
+            ? <p>Select a root and scale type · Powered by <a href="https://github.com/tonaljs/tonal" target="_blank" rel="noopener noreferrer">Tonal.js</a></p>
+            : <p>Explore intervals and scale patterns · Powered by <a href="https://github.com/tonaljs/tonal" target="_blank" rel="noopener noreferrer">Tonal.js</a></p>
         }
       </footer>
     </div>

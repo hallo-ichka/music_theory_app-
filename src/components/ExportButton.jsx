@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import './ExportButton.css';
 
-export default function ExportButton({ svgRef, chordName }) {
+export default function ExportButton({ svgRef, chordName, transparentBg }) {
   const [isExporting, setIsExporting] = useState(false);
   const [scale, setScale] = useState(3);
 
@@ -69,9 +69,10 @@ export default function ExportButton({ svgRef, chordName }) {
       canvas.height = svgHeight * scale;
       const ctx = canvas.getContext('2d');
 
-      // White background
-      ctx.fillStyle = '#FFFFFF';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      if (!transparentBg) {
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
 
       // Load SVG as image
       const img = new Image();
@@ -102,7 +103,7 @@ export default function ExportButton({ svgRef, chordName }) {
       console.error('Export failed:', err);
       setIsExporting(false);
     }
-  }, [svgRef, scale, chordName]);
+  }, [svgRef, scale, chordName, transparentBg]);
 
   return (
     <div className="export-controls">
