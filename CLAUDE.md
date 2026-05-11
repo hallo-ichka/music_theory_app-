@@ -14,6 +14,8 @@ npm run deploy    # Build + deploy to GitHub Pages
 
 No test runner is configured — testing is manual in the browser.
 
+**Node.js requirement:** Vite requires Node.js 20.19+ or 22.12+. If `npm run dev` fails with a `styleText` or native binding error, upgrade Node (e.g. `nvm install 22 && nvm use 22`) then reinstall: `rm -rf node_modules package-lock.json && npm install`.
+
 ## Architecture
 
 **Chord Visualizer** is a client-side React SPA (no backend) that converts note input (e.g., "C4, E4, G4") into interactive SVG piano keyboard visualizations with chord detection and PNG export.
@@ -30,6 +32,13 @@ NoteInput → App (state) → PianoKeyboard (SVG render)
 2. `PianoKeyboard` renders a 3-octave SVG (C3–C5) using `generateKeyboardLayout()`, highlighting matched keys.
 3. `ExportButton` clones the SVG, inlines styles (CSS is lost during serialization), renders to Canvas at 2×/3×/4×, and saves as PNG.
 4. A `svgRef` is threaded from `App` through both `PianoKeyboard` and `ExportButton` to avoid circular dependencies.
+
+### UI controls
+
+The controls bar (`.controls-bar` in `App.css`) sits at the top of `<main>` and holds two distinct control types side by side:
+
+- **Mode selector** (`.mode-toggle`) — mutually exclusive segmented buttons: Chords / Scales. Controls the `mode` state.
+- **Labels toggle** (`.label-toggle`) — an independent pill switch on the right. Controls the `showLabels` boolean, which gates per-key note labels and the chord/scale name annotation in `PianoKeyboard`. These are intentionally separate controls — do not merge them back into the same group.
 
 ### Key files
 
