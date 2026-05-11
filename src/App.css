@@ -108,6 +108,62 @@
   text-decoration: underline;
 }
 
+/* ---- Controls Bar ---- */
+.controls-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: var(--space-md);
+}
+
+/* ---- Label Toggle Switch ---- */
+.label-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.label-toggle__track {
+  position: relative;
+  width: 32px;
+  height: 18px;
+  border-radius: 999px;
+  background: var(--border-subtle);
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: background var(--duration-fast) var(--ease-out-quart);
+  flex-shrink: 0;
+}
+
+.label-toggle__track--on {
+  background: var(--accent);
+}
+
+.label-toggle__thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform var(--duration-fast) var(--ease-out-quart);
+}
+
+.label-toggle__track--on .label-toggle__thumb {
+  transform: translateX(14px);
+}
+
+.label-toggle__text {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-tertiary);
+}
+
 /* ---- Mode Toggle ---- */
 .mode-toggle {
   display: inline-flex;

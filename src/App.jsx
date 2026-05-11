@@ -84,29 +84,35 @@ export default function App() {
       </header>
 
       <main className="app-main">
-        <div className="mode-toggle" role="group" aria-label="Visualization mode">
-          <button
-            type="button"
-            className={`mode-btn${mode === 'chord' ? ' mode-btn--active' : ''}`}
-            onClick={() => setMode('chord')}
-          >
-            Chords
-          </button>
-          <button
-            type="button"
-            className={`mode-btn${mode === 'scale' ? ' mode-btn--active' : ''}`}
-            onClick={() => setMode('scale')}
-          >
-            Scales
-          </button>
-          <button
-            type="button"
-            className={`mode-btn${showLabels ? ' mode-btn--active' : ''}`}
-            onClick={() => setShowLabels((v) => !v)}
-            aria-pressed={showLabels}
-          >
-            Labels
-          </button>
+        <div className="controls-bar">
+          <div className="mode-toggle" role="group" aria-label="Visualization mode">
+            <button
+              type="button"
+              className={`mode-btn${mode === 'chord' ? ' mode-btn--active' : ''}`}
+              onClick={() => setMode('chord')}
+            >
+              Chords
+            </button>
+            <button
+              type="button"
+              className={`mode-btn${mode === 'scale' ? ' mode-btn--active' : ''}`}
+              onClick={() => setMode('scale')}
+            >
+              Scales
+            </button>
+          </div>
+          <label className="label-toggle">
+            <button
+              type="button"
+              role="switch"
+              aria-checked={showLabels}
+              className={`label-toggle__track${showLabels ? ' label-toggle__track--on' : ''}`}
+              onClick={() => setShowLabels((v) => !v)}
+            >
+              <span className="label-toggle__thumb" />
+            </button>
+            <span className="label-toggle__text">Labels</span>
+          </label>
         </div>
 
         <section className="input-section" aria-label="Note input">
